@@ -109,9 +109,10 @@ background_image = pygame.image.load("new.jpg")
 tilesize=10
 gridwidth=800
 gridheight=770
-BLACK=(1,1,1)
+BLACK=(100,100,100)
 WHITE=(255,255,255)
 GRAY=(140,140,140)
+BLUE=(0,0,230)
 
 
 class Grid:
@@ -131,33 +132,46 @@ class Grid:
         neigbours = [node + connection for connection in self.connections]
         neigbours= filter(self.in_bounds, neigbours)
         neigbours = filter(self.passable, neigbours)
-        print(neigbours)
+        return neigbours
 
     def draw_grid(self):
         for x in range(0, self.width,tilesize):
-            pygame.draw.line(screen, GRAY, (x, 0), (x, self.height))
+            pygame.draw.line(screen, BLACK, (x, 0), (x, self.height))
         for y in range(0, self.height, tilesize):
-            pygame.draw.line(screen, GRAY, (0, y), (self.width, y))
+            pygame.draw.line(screen, BLACK, (0, y), (self.width, y))
+
+    def draw(self):
+        for wall in self.walls:
+            rect= pygame.Rect(wall*tilesize,(tilesize,tilesize))
+            pygame.draw.rect(screen,BLUE,rect)
 
 g= Grid(gridwidth,gridheight)
-g.walls=[vector(2,1),vector(2,2)]
-g.draw_grid()
-background_image.set_alpha(140)
+
+background_image.set_alpha(200)
 screen.blit(background_image, [0,0])
-g.find_neighbours((10,10))
 
 while not done:
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
             done = True
 
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mpos = vector(pygame.mouse.get_pos()) // tilesize
+            if event.button == 1 or event.button == 2 or event.button == 3:
+                if mpos in g.walls:
+                    g.walls.remove(mpos)
+                else:
+                    g.walls.append(mpos)
 
 
 
+    g.draw_grid()
+    g.draw()
     # Limit to 60 frames per second
     clock.tick(60)
-
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
+    background_image.set_alpha(200)
+    screen.blit(background_image, [0, 0])
 
 pygame.quit()
