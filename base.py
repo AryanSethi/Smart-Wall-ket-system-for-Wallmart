@@ -1,5 +1,7 @@
 import pygame
 import sys
+import ast
+import numpy as np
 
 categories = {
     "Meat and Poultry": (1, 1),
@@ -115,6 +117,7 @@ GRAY=(140,140,140)
 BLUE=(0,0,230)
 
 
+
 class Grid:
     def __init__(self,width,height):
         self.width=width
@@ -140,7 +143,7 @@ class Grid:
         for y in range(0, self.height, tilesize):
             pygame.draw.line(screen, BLACK, (0, y), (self.width, y))
 
-    def draw(self):
+    def draw_wall(self):
         for wall in self.walls:
             rect= pygame.Rect(wall*tilesize,(tilesize,tilesize))
             pygame.draw.rect(screen,BLUE,rect)
@@ -150,23 +153,38 @@ g= Grid(gridwidth,gridheight)
 background_image.set_alpha(200)
 screen.blit(background_image, [0,0])
 
+objects=[]
+
+with open("list.txt", 'r') as f:
+    objects = [line.rstrip('\n') for line in f]
+
+
 while not done:
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
             done = True
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mpos = vector(pygame.mouse.get_pos()) // tilesize
-            if event.button == 1 or event.button == 2 or event.button == 3:
-                if mpos in g.walls:
-                    g.walls.remove(mpos)
-                else:
-                    g.walls.append(mpos)
+    #     if event.type == pygame.MOUSEBUTTONDOWN:
+    #         mpos = vector(pygame.mouse.get_pos()) // tilesize
+    #         if event.button == 1 or event.button == 2 or event.button == 3:
+    #             if mpos in g.walls:
+    #                 g.walls.remove(mpos)
+    #                 print("mpos is ",mpos," and type is ",type(mpos))
+    #             else:
+    #                 g.walls.append(mpos)
+    #
+    #
+    # g.draw_wall()
 
+
+    for string in objects:
+        list = ast.literal_eval(string)
+        list = pygame.math.Vector2(list)
+        rect = pygame.Rect(list * tilesize, (tilesize, tilesize))
+        pygame.draw.rect(screen, BLUE, rect)
 
 
     g.draw_grid()
-    g.draw()
     # Limit to 60 frames per second
     clock.tick(60)
     # Go ahead and update the screen with what we've drawn.
@@ -175,3 +193,7 @@ while not done:
     screen.blit(background_image, [0, 0])
 
 pygame.quit()
+
+# with open("list.txt",'w') as f:
+#     for w in g.walls:
+#         f.write(str(w)+"\n")
