@@ -1,7 +1,7 @@
 import pygame
 import sys
 import ast
-import numpy as np
+
 
 categories = {
     "Meat and Poultry": (1, 1),
