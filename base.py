@@ -156,7 +156,7 @@ screen.blit(background_image, [0,0])
 objects=[]
 
 with open("list.txt", 'r') as f:
-    objects = [line.rstrip('\n') for line in f]
+    objects = [line.rstrip('\n') for line in f]    #loading coordinates file containing the coordinates of shelves in the store
 
 
 while not done:
@@ -196,4 +196,4 @@ pygame.quit()
 
 # with open("list.txt",'w') as f:
 #     for w in g.walls:
-#         f.write(str(w)+"\n")
+#         f.write(str(w)+"\n")     # to make a coordinate file containing all the coordinates of te shelves in the store
